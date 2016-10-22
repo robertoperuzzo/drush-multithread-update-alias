@@ -89,3 +89,36 @@ function drush_ial_custom($limit = 10, $batch_size = 10, $threads = 1) {
   $time = time() - $time;
   drush_print("Time taken with {$threads} threads: {$time} seconds");
 }
+
+/**
+ * Updates url alias.
+ */
+function drush_update_alias($thread, $limit, $offset, $node_types = '') {
+
+  $node_types_array = explode(',', $node_types);
+
+  drush_print("Thread $thread is working for $limit nodes starting " .
+    "from $offset...");
+
+  // Retrieve the next group of nids.
+  $query = db_select('node', 'n');
+
+  $result = $query->fields('n', array('nid'))
+      ->orderBy('n.nid', 'ASC')
+      ->condition('type', $node_types_array, 'IN')
+      ->range($offset, $limit)->execute();
+
+  // Load pathauto.module from the pathauto module.
+  module_load_include('module', 'pathauto', 'pathauto');
+
+  $current_node = 0;
+  foreach ($result as $row) {
+    // Create the nids array
+    $node = node_load($row->nid);
+    pathauto_node_update_alias($node, 'update');
+
+    // Update our progress information.
+    $current_node = $row->nid;
+  }
+  drush_print("## Last node processed is nid=$current_node.");
+}
