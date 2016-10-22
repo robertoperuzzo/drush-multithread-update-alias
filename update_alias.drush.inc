@@ -48,7 +48,7 @@ function my_module_drush_command() {
  * @param int $thread
  *    Number of threads.
  */
-function drush_ial_custom($limit = 10, $batch_size = 10, $threads = 1) {
+function drush_mt_command($limit = 10, $batch_size = 10, $threads = 1) {
   $time = time();
 
   try {
