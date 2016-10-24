@@ -77,7 +77,7 @@ function drush_mt_command($limit = 10, $batch_size = 10, $threads = 1) {
       $limit = $result->rowCount();
     }
 
-    drush_print("Going to work on {$limit} jobs with {$threads} threads...");
+    drush_log("Going to work on {$limit} jobs with {$threads} threads...");
 
     drush_thread_manager($limit, $batch_size, $threads, '_mt_command_setup',
       '_mt_command_teardown', $starting_offset);
@@ -87,7 +87,7 @@ function drush_mt_command($limit = 10, $batch_size = 10, $threads = 1) {
   }
 
   $time = time() - $time;
-  drush_print("Time taken with {$threads} threads: {$time} seconds");
+  drush_log("Time taken with {$threads} threads: {$time} seconds");
 }
 
 /**
@@ -97,7 +97,7 @@ function drush_update_alias($thread, $limit, $offset, $node_types = '') {
 
   $node_types_array = explode(',', $node_types);
 
-  drush_print("Thread $thread is working for $limit nodes starting " .
+  drush_log("Thread $thread is working for $limit nodes starting " .
     "from $offset...");
 
   // Retrieve the next group of nids.
@@ -120,7 +120,7 @@ function drush_update_alias($thread, $limit, $offset, $node_types = '') {
     // Update our progress information.
     $current_node = $row->nid;
   }
-  drush_print("## Last node processed is nid=$current_node.");
+  drush_log("## Last node processed is nid=$current_node.");
 }
 
 /**
@@ -204,7 +204,7 @@ function drush_thread_manager($job_count, $job_batch_size, $thread_count, $setup
         $cmd = $setup_function($thread_id, $job_batch_size, $offset);
         $process = proc_open($cmd, $descriptor_spec, $pipes);
 
-        drush_print("Thread {$thread_id} starts at offset $offset. Jobs remaining: $jobs_remaining");
+        drush_log("Thread {$thread_id} starts at offset $offset. Jobs remaining: $jobs_remaining");
 
         foreach ($pipes as $pipe) {
           stream_set_blocking($pipe, FALSE);
@@ -241,7 +241,7 @@ function drush_thread_manager($job_count, $job_batch_size, $thread_count, $setup
         $end_date = date('G:i:s d/m/y', ($job_count / $speed) + $start);
         $speed = floor($speed * 60);
 
-        drush_print("Thread {$thread_id} finished. Average speed is {$speed} jobs/minute. Estimated completion at {$end_date}");
+        drush_log("Thread {$thread_id} finished. Average speed is {$speed} jobs/minute. Estimated completion at {$end_date}");
       }
     }
 
@@ -285,7 +285,7 @@ function _mt_monitor_process($thread_id, $process, $pipes) {
         if (!empty($message)) {
           if ($id == 1) {
             // Message from stdout.
-            drush_print(" -> T$thread_id: $message");
+            drush_log(" -> T$thread_id: $message");
           }
           else {
             // Message from stderr.
