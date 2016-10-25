@@ -38,12 +38,12 @@ function my_module_drush_command() {
  * drush update-alias
  *
  * @param int $limit
- *    The total number of jobs to process. Each job is an
- *    execution of drush update-alias. If $limit = 0, then it retrieves all
- *    nodes for the chosen content-types.
+ *    The total number of nodes to process. If $limit = 0, then it 
+ *    retrieves all nodes for the chosen content-types.
  *
  * @param int $batch_size
- *    Number of nodes updated per single job.
+ *    Number of nodes updated per single job. Each job is an
+ *    execution of drush update-alias.
  *
  * @param int $thread
  *    Number of threads.
